@@ -1,0 +1,60 @@
+@(form: Form[MessageForm.Data], postUrl: Call, formErrorMsg: String = new String)(implicit request: RequestHeader, messages: Messages)
+
+@main("Leave Message System") {
+    <div id="message-enter-panel" class="col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Leave message form
+            </div>
+            <div class="panel-body">
+                @if(!formErrorMsg.isEmpty) {
+                    <div class="alert alert-danger text-center">
+                        <span class="glyphicon glyphicon-minus-sign"></span> @formErrorMsg
+                    </div>
+                }
+
+                <h4><small>* - Required field</small></h4>
+
+                @helper.form(postUrl) {
+                    @helper.CSRF.formField
+
+                    @helper.inputText(form("userName"),
+                        '_label -> "Name *",
+                        '_showConstraints  -> false,
+                        'placeholder -> "Please enter your name...",
+                        'class -> "form-control"
+                    )
+
+                    @helper.textarea(form("messageText"),
+                        '_label -> "Message text *",
+                        '_showConstraints -> false,
+                        'placeholder -> "Please enter your text message...",
+                        'class -> "form-control"
+                    )
+
+                    <button class="btn btn-default">Leave message</button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7 col-md-offset-1">
+        <h2>Messages: </h2>
+        <div id="preloader" class='loader loader1'>
+            <div>
+                <div>
+                    <div>
+                        <div>
+                            <div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="messages">
+            <script defer src="@routes.Assets.versioned("javascripts/message.service.js")" type="text/javascript"></script>
+        </div>
+    </div>
+}
