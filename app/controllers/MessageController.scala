@@ -29,7 +29,7 @@ class MessageController @Inject()(cc: ControllerComponents) extends AbstractCont
     val successFunction = { data: Data =>
       val message = Message(userName = data.userName, messageText = data.messageText, LocalDateTime.now())
       if (MessageService.saveMessage(message)) {
-        Ok(views.html.index(MessageForm.form, postUrl))
+        Redirect(routes.MessageController.index())
       } else {
         InternalServerError(views.html.index(MessageForm.form, postUrl, createMessageError))
       }
