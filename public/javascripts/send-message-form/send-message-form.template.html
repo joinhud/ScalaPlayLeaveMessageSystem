@@ -1,0 +1,22 @@
+<form name="msgForm" novalidate>
+  <label>
+    * Name:
+    <input placeholder="Please enter your name..." ng-model="$ctrl.message.userName" name="uName" required pattern="^[A-Z]'?[-a-zA-Z]+$">
+  </label>
+  <div ng-show="msgForm.$submitted || msgForm.uName.$touched">
+    <div ng-show="msgForm.uName.$error.required">Required field</div>
+    <div ng-show="msgForm.uName.$error.pattern">Doesn't match te pattern</div>
+  </div>
+  <label>
+    * Message text:
+    <input placeholder="Please enter your text message..." ng-model="$ctrl.message.messageText" name="msgText" required>
+  </label>
+  <div ng-show="msgForm.$submitted || msgForm.msgText.$touched">
+    <div ng-show="msgForm.msgText.$error.required">Required field</div>
+  </div>
+  <input type="button" value="Leave message" ng-click="$ctrl.send(msgForm)">
+</form>
+
+<p>
+  {{$ctrl.result}}
+</p>

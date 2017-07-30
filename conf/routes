@@ -8,7 +8,7 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 GET     /                           controllers.MessageController.index
 
-POST    /                           controllers.MessageController.createMessage
+#POST    /                           controllers.MessageController.createMessage
 
 GET     /messages                   controllers.MessageController.messages
 

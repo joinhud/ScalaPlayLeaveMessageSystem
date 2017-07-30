@@ -1,60 +1,70 @@
-@(form: Form[MessageForm.Data], postUrl: Call, formErrorMsg: String = new String)(implicit request: RequestHeader, messages: Messages)
-
-@main("Leave Message System") {
-    <div id="message-enter-panel" class="col-md-4">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                Leave message form
+@()
+<!DOCTYPE html>
+<html lang="en" ng-app="leaveMessageSystem">
+    <head>
+        <title>Leave Message System</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/loader.css")">
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">Leave Message System</a>
+                </div>
             </div>
-            <div class="panel-body">
-                @if(!formErrorMsg.isEmpty) {
-                    <div class="alert alert-danger text-center">
-                        <span class="glyphicon glyphicon-minus-sign"></span> @formErrorMsg
+        </nav>
+
+        <div id="main-content" class="container-fluid">
+            <div class="row">
+                <div id="message-enter-panel" class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Leave message form
+                        </div>
+                        <div class="panel-body">
+                            @*if(!formErrorMsg.isEmpty) {
+                                <div class="alert alert-danger text-center">
+                                    <span class="glyphicon glyphicon-minus-sign"></span> @formErrorMsg
+                                </div>
+                            }*@
+
+                            <h4><small>* - Required field</small></h4>
+                            <send-message-form></send-message-form>
+                        </div>
                     </div>
-                }
+                </div>
 
-                <h4><small>* - Required field</small></h4>
-
-                @helper.form(postUrl) {
-                    @helper.CSRF.formField
-
-                    @helper.inputText(form("userName"),
-                        '_label -> "Name *",
-                        '_showConstraints  -> false,
-                        'placeholder -> "Please enter your name...",
-                        'class -> "form-control"
-                    )
-
-                    @helper.textarea(form("messageText"),
-                        '_label -> "Message text *",
-                        '_showConstraints -> false,
-                        'placeholder -> "Please enter your text message...",
-                        'class -> "form-control"
-                    )
-
-                    <button class="btn btn-default">Leave message</button>
-                }
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-7 col-md-offset-1">
-        <h2>Messages: </h2>
-        <div id="preloader" class='loader loader1'>
-            <div>
-                <div>
-                    <div>
+                <div class="col-md-7 col-md-offset-1">
+                    <h2>Messages: </h2>
+                    <div id="preloader" class='loader loader1'>
                         <div>
                             <div>
-                                <div></div>
+                                <div>
+                                    <div>
+                                        <div>
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div id="messages">
+                            <!-- <script defer src="routes.Assets.versioned("javascripts/message.service.js")" type="text/javascript"></script> -->
                     </div>
                 </div>
             </div>
         </div>
-        <div id="messages">
-            <script defer src="@routes.Assets.versioned("javascripts/message.service.js")" type="text/javascript"></script>
-        </div>
-    </div>
-}
+
+        <script src="@routes.Assets.versioned("javascripts/lib/angular/angular.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/lib/angular/angular-route.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/app.module.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/send-message-form/send-message-form.module.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/send-message-form/send-message-form.component.js")"></script>
+    </body>
+</html>

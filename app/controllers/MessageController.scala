@@ -23,39 +23,19 @@ class MessageController @Inject()(cc: ControllerComponents) extends AbstractCont
   private final val createMessageError = "The message can not be saved because a server error has occurred. Try repeat again later."
 
   /*
-  * Immutable variable for storing action which can be submitted
-  * by the form for sending new messages.
-  */
-  val postUrl: Call = routes.MessageController.createMessage()
-
-  /*
   * Action for displaying index view.
   */
   def index = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index(MessageForm.form, postUrl))
+    Ok(views.html.index())
   }
 
   /*
   * Action for saving and handling data from the form
   * for sending new messages.
   */
-  def createMessage = Action { implicit request: Request[AnyContent] =>
-    val errorFunction = { formWithErrors: Form[Data] =>
-      BadRequest(views.html.index(formWithErrors, postUrl))
-    }
-
-    val successFunction = { data: Data =>
-      val message = Message(userName = data.userName, messageText = data.messageText, LocalDateTime.now())
-      if (MessageService.saveMessage(message)) {
-        Redirect(routes.MessageController.index())
-      } else {
-        InternalServerError(views.html.index(MessageForm.form, postUrl, createMessageError))
-      }
-    }
-
-    val formValidationResult = form.bindFromRequest
-    formValidationResult.fold(errorFunction, successFunction)
-  }
+  /*def createMessage = Action(parse.json) { request =>
+    request.body
+  }*/
 
   /*
   * Action for receiving JSON string
