@@ -6,6 +6,7 @@ import javax.inject.{Inject, Singleton}
 import models.Message
 import play.api.data.Form
 import play.api.i18n.I18nSupport
+import play.api.libs.json.JsValue
 import play.api.mvc._
 import services.MessageService
 
@@ -23,19 +24,19 @@ class MessageController @Inject()(cc: ControllerComponents) extends AbstractCont
   private final val createMessageError = "The message can not be saved because a server error has occurred. Try repeat again later."
 
   /*
-  * Action for displaying index view.
-  */
-  def index = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
-  }
-
-  /*
   * Action for saving and handling data from the form
   * for sending new messages.
   */
-  /*def createMessage = Action(parse.json) { request =>
-    request.body
-  }*/
+  def createMessage = Action { request: Request[AnyContent] =>
+    val body: AnyContent = request.body
+    val jsonBody: Option[JsValue] = body.asJson
+
+    jsonBody.map { json =>
+      Ok("Got: " + (json \ "userName").as[String]).as(TEXT)
+    }.getOrElse {
+      BadRequest("Expecting application/json request body")
+    }
+  }
 
   /*
   * Action for receiving JSON string

@@ -1,5 +1,3 @@
 'use strict';
 
-angular.module('leaveMessageSystem',[
-	'sendMessage'
-]);
+angular.module('leaveMessageSystem',[]);

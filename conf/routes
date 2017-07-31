@@ -4,12 +4,11 @@
 # ~~~~
 
 ## Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file)
 
-GET     /                           controllers.MessageController.index
+GET     /                           controllers.HomeController.index
 
-#POST    /                           controllers.MessageController.createMessage
++ nocsrf
+PUT     /messages                   controllers.MessageController.createMessage
 
 GET     /messages                   controllers.MessageController.messages
-
-      

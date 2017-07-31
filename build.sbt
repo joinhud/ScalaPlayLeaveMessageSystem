@@ -10,7 +10,15 @@ resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
       
 scalaVersion := "2.12.2"
 
-libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice )
+libraryDependencies ++= Seq(
+  ehcache,
+  ws,
+  guice,
+  "org.webjars" %% "webjars-play" % "2.6.0",
+  "org.webjars" % "jquery" % "3.2.1",
+  "org.webjars" % "bootstrap" % "3.3.7",
+  "org.webjars" % "angularjs" % "1.5.9"
+)
 
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
 
