@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import error.ErrorMessages
 import models.Message
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -13,11 +14,8 @@ import util.MessageValidator
 * Message controller.
 * */
 @Singleton
-class MessageController @Inject()(cc: ControllerComponents) extends AbstractController(cc) with I18nSupport {
+class MessageController @Inject()(cc: ControllerComponents, messageService: MessageService) extends AbstractController(cc) with I18nSupport {
 
-  private final val createMessageError = "The message can not be saved because a server error has occurred. Try repeat again later."
-  private final val getMessagesError = "Can not receive data from server because a server error has occurred. Try repeat again later."
-  private final val invalidJsonError = "Invalid syntax of JSON object."
   private final val successfullySaved = "Message successfully saved."
 
   /*
@@ -29,16 +27,16 @@ class MessageController @Inject()(cc: ControllerComponents) extends AbstractCont
 
     messageResult.fold(
       errors => {
-        BadRequest(invalidJsonError)
+        BadRequest(ErrorMessages.INVALID_JSON_ERROR)
       },
       message => {
         MessageValidator.validate(message) match {
           case Some(errors) => UnprocessableEntity(Json.toJson(errors))
           case None =>
-            if (MessageService.saveMessage(message)) {
+            if (messageService.saveMessage(message)) {
               Ok(successfullySaved).as(TEXT)
             } else {
-              InternalServerError(createMessageError)
+              InternalServerError(ErrorMessages.CREATE_MESSAGE_ERROR)
             }
         }
       }
@@ -50,9 +48,9 @@ class MessageController @Inject()(cc: ControllerComponents) extends AbstractCont
   * with messages.
   */
   def messages = Action {
-    MessageService.listJsonMessages match {
+    messageService.getMessagesAsJsonString match {
       case Some(messages) => Ok(messages)
-      case None => NotFound(getMessagesError).as(TEXT)
+      case None => NotFound(ErrorMessages.GET_MESSAGES_ERROR).as(TEXT)
     }
   }
 }

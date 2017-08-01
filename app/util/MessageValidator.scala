@@ -2,11 +2,12 @@ package util
 
 import error.ValidationError
 import models.Message
+import error.ErrorMessages
 
+/*
+* Util singleton class for validation Message instance
+*/
 object MessageValidator {
-  private final val RequiredFieldError = "Required field"
-  private final val IncorrectNameValueError = "Invalid name. Name must contains only alphabetical symbols and starts with capital letter."
-
   private final val UserNamePointer = "userName"
   private final val MessageTextPointer = "messageText"
 
@@ -17,18 +18,18 @@ object MessageValidator {
     var result = None: Option[Seq[ValidationError]]
 
     if (message.userName.isEmpty) {
-      errors :+= ValidationError(constraint = ValidationError.Required, pointer = UserNamePointer, detail = RequiredFieldError)
+      errors :+= ValidationError(constraint = ValidationError.Required, pointer = UserNamePointer, detail = ErrorMessages.REQUIRED_FIELD_ERROR)
     }
 
     if (!message.userName.matches(UserNamePattern.regex)) {
-      errors :+= ValidationError(constraint = ValidationError.Invalid, pointer = UserNamePointer, detail = IncorrectNameValueError)
+      errors :+= ValidationError(constraint = ValidationError.Invalid, pointer = UserNamePointer, detail = ErrorMessages.INCORRECT_NAME_VALUE_ERROR)
     }
 
     if (message.messageText.isEmpty) {
-      errors :+= ValidationError(constraint = ValidationError.Required, pointer = MessageTextPointer, detail = RequiredFieldError)
+      errors :+= ValidationError(constraint = ValidationError.Required, pointer = MessageTextPointer, detail = ErrorMessages.REQUIRED_FIELD_ERROR)
     }
 
-    if (!errors.isEmpty) {
+    if (errors.nonEmpty) {
       result = Some(errors.seq)
     }
 
