@@ -1,41 +1,51 @@
 package controllers
 
-import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
 
 import models.Message
-import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.libs.json.JsValue
+import play.api.libs.json.Json
 import play.api.mvc._
 import services.MessageService
+import util.MessageValidator
 
 /*
 * Main application controller.
 * */
 @Singleton
 class MessageController @Inject()(cc: ControllerComponents) extends AbstractController(cc) with I18nSupport {
-  import MessageForm._
 
   /*
   * Immutable constant for storing error message which
   * may be appeared during saving new message.
   */
   private final val createMessageError = "The message can not be saved because a server error has occurred. Try repeat again later."
+  private final val invalidJsonError = "Invalid syntax of JSON object."
+  private final val successfullySaved = "Message successfully saved."
 
   /*
   * Action for saving and handling data from the form
   * for sending new messages.
   */
-  def createMessage = Action { request: Request[AnyContent] =>
-    val body: AnyContent = request.body
-    val jsonBody: Option[JsValue] = body.asJson
+  def createMessage = Action(BodyParsers.parse.json) { request =>
+    val messageResult = request.body.validate[Message]
 
-    jsonBody.map { json =>
-      Ok("Got: " + (json \ "userName").as[String]).as(TEXT)
-    }.getOrElse {
-      BadRequest("Expecting application/json request body")
-    }
+    messageResult.fold(
+      errors => {
+        BadRequest(invalidJsonError)
+      },
+      message => {
+        MessageValidator.validate(message) match {
+          case Some(errors) => UnprocessableEntity(Json.toJson(errors))
+          case None =>
+            if (MessageService.saveMessage(message)) {
+              Ok(successfullySaved).as(TEXT)
+            } else {
+              InternalServerError(createMessageError)
+            }
+        }
+      }
+    )
   }
 
   /*
