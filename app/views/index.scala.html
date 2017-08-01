@@ -19,6 +19,8 @@
         <script src="@routes.Assets.versioned("/lib/angularjs/angular-route.min.js")"></script>
         <script src="@routes.Assets.versioned("/lib/angularjs/angular-resource.min.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/app.module.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/service/polling.service.js")"></script>
+        <script src="@routes.Assets.versioned("javascripts/controller/message-list.controller.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/controller/send-form.controller.js")"></script>
     </head>
     <body>
@@ -37,37 +39,47 @@
                         <div class="panel-heading">
                             Leave message form
                         </div>
-                        <div class="panel-body">
-                            @*if(!formErrorMsg.isEmpty) {
-                                <div class="alert alert-danger text-center">
-                                    <span class="glyphicon glyphicon-minus-sign"></span> @formErrorMsg
+                        <div class="panel-body" ng-controller="SendMessageFormController">
+                            <div ng-if="failureSaveMessage">
+                                <div class="alert alert-danger text-center alert-dismissable fade in">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                    {{failureSaveMessage}}
                                 </div>
-                            }*@
-
-                            <div ng-controller="SendMessageFormController">
-                                <h4><small>* - Required field</small></h4>
-
-                                <form name="msgForm" novalidate>
-                                    <label>
-                                        Name *
-                                            <input placeholder="Please enter your name..." ng-model="message.userName" name="uName" required pattern="^[A-Z]'?[-a-zA-Z]+$">
-                                    </label>
-                                    <div ng-show="msgForm.$submitted || msgForm.uName.$touched">
-                                        <div ng-show="msgForm.uName.$error.required">Required field</div>
-                                        <div ng-show="msgForm.uName.$error.pattern">Doesn't match te pattern</div>
-                                    </div>
-                                    <label>
-                                        Message text *
-                                        <input placeholder="Please enter your text message..." ng-model="message.messageText" name="msgText" required>
-                                    </label>
-                                    <div ng-show="msgForm.$submitted || msgForm.msgText.$touched">
-                                        <div ng-show="msgForm.msgText.$error.required">Required field</div>
-                                    </div>
-                                    <input type="button" value="Leave message" ng-click="send(msgForm)">
-                                </form>
-
-                                <p>Result: {{result}}</p>
                             </div>
+
+                            <div ng-if="successfullySaveMessage" >
+                                <div class="alert alert-success text-center alert-dismissable fade in">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                    {{successfullySaveMessage}}
+                                </div>
+                            </div>
+
+                            <h4><small>* - Required field</small></h4>
+
+                            <form name="msgForm" novalidate class="css-form">
+                                <div class="form-group">
+                                    <label for="inputName" ng-class="{'error' : msgForm.uName.$invalid && msgForm.uName.$touched, 'success' : msgForm.uName.$valid, 'default' : msgForm.uName.$pristine}">
+                                        Name *
+                                    </label>
+                                    <input id="inputName" placeholder="Please enter your name..." class="form-control" ng-model="message.userName" name="uName" required pattern="^[A-Z]'?[-a-zA-Z]+$">
+                                </div>
+                                <div ng-if="msgForm.$submitted || msgForm.uName.$touched">
+                                    <p ng-if="msgForm.uName.$error.required" class="error">{{userNameRequiredError}}</p>
+                                    <p ng-if="msgForm.uName.$error.pattern" class="error">{{userNamePatternError}}</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputMessageText" ng-class="{'error' : msgForm.msgText.$invalid && msgForm.msgText.$touched, 'success' : msgForm.msgText.$valid, 'default' : msgForm.msgText.$pristine}">
+                                        Message text *
+                                    </label>
+                                    <textarea id="inputMessageText" placeholder="Please enter your text message..." class="form-control" ng-model="message.messageText" name="msgText" required></textarea>
+                                </div>
+                                <div ng-if="msgForm.$submitted || msgForm.msgText.$touched">
+                                    <p ng-if="msgForm.msgText.$error.required" class="error">{{messageTextRequiredError}}</p>
+                                </div>
+
+                                <input id="submitBtn" class="btn btn-primary" type="button" value="Leave message" ng-click="send(msgForm)">
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -87,8 +99,24 @@
                             </div>
                         </div>
                     </div>
-                    <div id="messages">
-                            <!-- <script defer src="routes.Assets.versioned("javascripts/message.service.js")" type="text/javascript"></script> -->
+                    <div id="messages" ng-controller="MessageListController">
+                        <div ng-if="messages.length == 0" class="alert alert-info text-center">
+                            <span class="glyphicon glyphicon-info-sign"></span> The message list is empty yet. Please leave your first message.
+                        </div>
+                        <div ng-if="messageListError.apperead" class="alert alert-danger text-center">
+                            <span class="glyphicon glyphicon-minus-sign"></span> {{messageListError.detail}}
+                        </div>
+                        <div ng-repeat="message in messages" class="panel panel-info">
+                            <div class="panel-heading">
+                                <span class="glyphicon glyphicon-user"></span> {{message.userName}}
+                            </div>
+                            <div class="panel-body">
+                                {{message.messageText}}
+                            </div>
+                            <div class="panel-footer">
+                                Date: {{message.date}}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

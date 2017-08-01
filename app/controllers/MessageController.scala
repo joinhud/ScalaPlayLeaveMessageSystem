@@ -20,6 +20,7 @@ class MessageController @Inject()(cc: ControllerComponents) extends AbstractCont
   * may be appeared during saving new message.
   */
   private final val createMessageError = "The message can not be saved because a server error has occurred. Try repeat again later."
+  private final val getMessagesError = "Can not receive data from server because a server error has occurred. Try repeat again later."
   private final val invalidJsonError = "Invalid syntax of JSON object."
   private final val successfullySaved = "Message successfully saved."
 
@@ -55,7 +56,7 @@ class MessageController @Inject()(cc: ControllerComponents) extends AbstractCont
   def messages = Action {
     MessageService.listJsonMessages match {
       case Some(messages) => Ok(messages)
-      case None => NotFound
+      case None => NotFound(getMessagesError).as(TEXT)
     }
   }
 }
