@@ -41,12 +41,6 @@ object MessageService {
   */
   private final val Lock: ReadWriteLock = new ReentrantReadWriteLock()
   /*
-  * The string pattern of a date.
-  * Used for formatting java.time.LocalDateTime objects
-  */
-  private final val DatePattern = "yyyy-MM-dd HH:mm:ss"
-
-  /*
   * Constant for storing error message which can appeared,
   * when the user cannot write data into the file.
   */
@@ -106,14 +100,6 @@ object MessageService {
 
       try {
         jsonWriter = new RandomAccessFile(JsonFile, "rw")
-
-        implicit val messageWrites = new Writes[Message] {
-          def writes(message: Message) = Json.obj(
-            "userName" -> message.userName,
-            "messageText" -> message.messageText,
-            "date" -> message.date.format(DateTimeFormatter.ofPattern(DatePattern))
-          )
-        }
 
         var jsonMessage = Json.toJson(message).toString() + JsonArrayEnd
 
